@@ -25,6 +25,7 @@ FXDEFMAP(MainWindow) MainWindow_Map[]=
 	FXMAPFUNC(SEL_COMMAND, MainWindow::UI_Tile, MainWindow::on_Tile_Click),
 	FXMAPFUNC(SEL_COMMAND, MainWindow::UI_New, MainWindow::on_New_Click),
 	FXMAPFUNC(SEL_RIGHTBUTTONPRESS, MainWindow::UI_Tile, MainWindow::on_Tile_Right_Click),
+	FXMAPFUNC(SEL_TIMEOUT, MainWindow::UI_Timer_Tick, MainWindow::on_Timer_Tick),
 };
 FXIMPLEMENT(MainWindow, FXMainWindow, MainWindow_Map, ARRAYNUMBER(MainWindow_Map))
 
@@ -45,6 +46,15 @@ MainWindow::MainWindow(FXApp *a)
 MainWindow::~MainWindow()
 {
 	delete board;
+}
+
+long
+MainWindow::on_Timer_Tick(FXObject *sender, FXSelector sel, void *data)
+{
+	seconds++;
+	time_label->setText(FXStringVal(seconds));
+	getApp()->addTimeout(this, UI_Timer_Tick, 1000, nullptr);
+	return 1;
 }
 
 void
@@ -75,6 +85,7 @@ MainWindow::create_ui()
 
 	// Label above the canvas
 	new FXLabel(canvasFrame,"foxminesweeper", NULL, JUSTIFY_CENTER_X|LAYOUT_FILL_X);
+	time_label = new FXLabel(canvasFrame, "0", nullptr, LAYOUT_CENTER_X);
 	// Horizontal divider line
 	new FXHorizontalSeparator(canvasFrame, SEPARATOR_GROOVE|LAYOUT_FILL_X);
 
@@ -109,6 +120,8 @@ MainWindow::create_ui()
 void
 MainWindow::new_game(int width, int height, int minecount)
 {
+	seconds = 0;
+	ticking = false;
 	if (board)
 		delete board;
 	puts("starting new game..");
@@ -196,6 +209,11 @@ MainWindow::draw_buttons()
 long
 MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 {
+	if (!ticking)
+	{
+		app->addTimeout(this, UI_Timer_Tick, 1000);
+		ticking = true;
+	}
 	if (game_over == true)
 		return 1;
 	int x = 0, y = 0;
@@ -216,20 +234,26 @@ MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 	if (!board->is_game_running() && !board->is_game_won())
 	{
 		/* lost */
+		app->removeTimeout(this, UI_Timer_Tick);
 		puts("you lose the game");
-		FXMessageBox *msgbox = new FXMessageBox(app, "Game Over", "You lost", nullptr, FX::MBOX_OK);
+		std::string message = "You lost in: " + std::to_string(seconds) + " seconds";
+		FXMessageBox *msgbox = new FXMessageBox(app, "Game Over", FXString(message.c_str()), nullptr, FX::MBOX_OK);
 		msgbox->create();
 		msgbox->show();
 		game_over = true;
+		ticking = false;
 	}
 	else if (!board->is_game_running() && board->is_game_won())
 	{
 		/* won */
+		app->removeTimeout(this, UI_Timer_Tick);
 		puts("you won the game");
-		FXMessageBox *msgbox = new FXMessageBox(app, "Game Over", "You win", nullptr, FX::MBOX_OK);
+		std::string message = "You won in: " + std::to_string(seconds) + " seconds";
+		FXMessageBox *msgbox = new FXMessageBox(app, "Game Over", FXString(message.c_str()), nullptr, FX::MBOX_OK);
 		msgbox->create();
 		msgbox->show();
 		game_over = true;
+		ticking = false;
 	}
 	button->setFrameStyle(0);
 	draw_buttons();
@@ -239,6 +263,11 @@ MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 long
 MainWindow::on_Tile_Right_Click(FXObject *sender, FXSelector sel, void *data)
 {
+	if (!ticking)
+	{
+		app->addTimeout(this, UI_Timer_Tick, 1000);
+		ticking = true;
+	}
 	if (game_over == true)
 		return 1;
 	int x = 0, y = 0;
