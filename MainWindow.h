@@ -18,6 +18,7 @@
 
 #include <fx.h>
 #include <FXScrollArea.h>
+#include <FXMessageBox.h>
 #include <algorithm>
 #include "Board.h"
 #include "icons.h"
@@ -41,6 +42,7 @@ class MainWindow : public FXMainWindow
 		/* Event handlers */
 		long on_Tile_Click(FXObject *sender, FXSelector sel, void *data);
 		long on_New_Click(FXObject *sender, FXSelector sel, void *data);
+		long on_Tile_Right_Click(FXObject *sender, FXSelector sel, void *data);
 		FXApp *get_app(){ return app; };
 
 
@@ -52,6 +54,7 @@ class MainWindow : public FXMainWindow
 		void create_ui();
 		void new_game(int width, int height, int minecount);
 		void draw_buttons();
+		bool game_over;
 		FXHorizontalFrame *contents;                // Content frame
 		FXVerticalFrame   *canvasFrame;             // Canvas frame
 		FXVerticalFrame   *buttonFrame;             // Button frame
@@ -62,6 +65,7 @@ class MainWindow : public FXMainWindow
 		std::vector<std::shared_ptr<FXButton>> tile_buttons;
 		/* icons */
 		FXIcon *bomb_icon;
+		FXIcon *flag_icon;
 		FXIcon *empty_icon;
 		FXIcon *tile_1_icon;
 		FXIcon *tile_2_icon;

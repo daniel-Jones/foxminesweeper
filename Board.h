@@ -18,21 +18,34 @@
 #include <vector>
 #include <memory>
 #include <cstdio>
+#include <cstdlib>
+#include <time.h>
 #include "Tile.h"
 
 class Board
 {
 	public:
-		Board(int width, int height);
+		Board(int width, int height, int minecount);
 		~Board();
 		int get_tile_count(){ return tilecount; };
 		Tile *get_tile_at(int x, int y);
 		bool reveal_tile_at(int x, int y);
 		void new_game(int x, int y);
+		bool is_game_running() { return this->game_running; };
+		bool is_game_won() { return this->game_won; };
+		bool check_win();
 	private:
 		std::vector<std::shared_ptr<Tile>> tiles;
+		void generate_mines();
+		void retrieve_neighbors();
+		void count_neighbor_mines(Tile *tile);
+		bool reveal_neighbor_tiles(int x, int y);
+		bool game_won;
+		void reveal_all_mines();
 		int tilecount;
+		int minecount;
 		int width;
 		int height;
+		bool game_running;
 };
 #endif

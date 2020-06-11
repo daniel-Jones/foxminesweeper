@@ -33,12 +33,23 @@ class Tile
 			FLAGGED		= 1 << 2,
 			REVEALED	= 1 << 3,
 		};
-		enum STATE get_flags() { return flags; }
-		void set_flag(enum STATE flag) { this->flags = (STATE) (this->flags | flag); }
-		void set_flags(enum STATE flags) { this->flags = flags; }
+		enum STATE get_flags() { return flags; };
+		void set_flag(enum STATE flag) { this->flags = (STATE) (this->flags | flag); };
+		void clear_flag(enum STATE flag) { this->flags = (STATE) (this->flags & ~flag); };
+		void toggle_flag(enum STATE flag) { this->flags = (STATE) (this->flags ^ flag); };
+		bool is_mine() { return this->flags & MINE; };
+		bool is_flagged() { return this->flags & FLAGGED; };
+		bool is_revealed() { return this->flags & REVEALED; };
+		int get_neighbor_mine_count() { return this->neighbor_mine_count; };
+		void set_neighbor_mine_count(int count) { this->neighbor_mine_count = count; };
+		Tile *get_neighbor(int i);
+
+		Tile *neighbors[8]; // one day make private with getters/setters
 	private:
+		void set_flags(enum STATE flags) { this->flags = flags; };
 		int x;
 		int y;
+		int neighbor_mine_count;
 		enum STATE flags;
 
 };

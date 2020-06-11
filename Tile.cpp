@@ -19,16 +19,17 @@ Tile::Tile(int x, int y)
 {
 	this->x = x;
 	this->y = y;
-	//bomb_icon = new FXGIFIcon(app, bomb, IMAGE_KEEP);
-	//empty_icon = new FXGIFIcon(app, empty, IMAGE_KEEP);
-	//this->setIcon(bomb_icon);
+	this->neighbor_mine_count = 0;
+	//
+	// better way?
+	for (int x = 0; x < 8; x++)
+		neighbors[x] = 0;
+	this->flags = HIDDEN; /* make sure we init the flags */
 
 }
 
 Tile::~Tile()
 {
-	//delete bomb_icon;
-	//delete empty_icon;
 }
 
 void
@@ -41,3 +42,12 @@ Tile::reveal()
 {
 	this->set_flag(REVEALED);
 }
+
+Tile *
+Tile::get_neighbor(int i)
+{
+	if (i < 0 || i > 8)
+		return nullptr;
+	return neighbors[i];
+}
+
