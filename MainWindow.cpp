@@ -278,6 +278,8 @@ MainWindow::on_Tile_Right_Click(FXObject *sender, FXSelector sel, void *data)
 	x = matrix->colOfChild(button);
 	y = matrix->rowOfChild(button);
 	tile = board->get_tile_at(x, y);
+	if (tile->is_revealed())
+		return 1;
 	printf("right click on: %d, %d\n", tile->get_x(), tile->get_y());
 	tile->toggle_flag(Tile::FLAGGED);
 	printf("%d\n", tile->is_flagged());
