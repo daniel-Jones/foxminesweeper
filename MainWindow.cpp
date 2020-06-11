@@ -140,20 +140,24 @@ MainWindow::draw_buttons()
 		tile = board->get_tile_at(x, y);
 		if (tile->is_flagged())
 		{
-			printf("flagged at: %d, %d\n", tile->get_x(), tile->get_y());
 			button->setIcon(flag_icon);
 			button->setFrameStyle(0);
 			continue;
 		}
-		else if (!tile->is_revealed())
+		 if (!tile->is_revealed())
+		 {
+			 button->setIcon(empty_icon);
+			 button->setFrameStyle(BUTTON_NORMAL);
 			continue;
-		else if (tile->is_mine())
+		 }
+		if (tile->is_mine())
 		{
 			button->setIcon(bomb_icon);
 			button->setFrameStyle(0);
 		}
 		else
 		{
+
 			switch (tile->get_neighbor_mine_count())
 			{
 				case 1:
@@ -207,7 +211,7 @@ MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 		return 1;
 	if (tile->is_flagged())
 		return 1;
-	printf("button pressed: x=%d, y=%d\n", x, y);
+	printf("left clicked on: x=%d, y=%d\n", x, y);
 	board->reveal_tile_at(x, y);
 	if (!board->is_game_running() && !board->is_game_won())
 	{
@@ -247,6 +251,7 @@ MainWindow::on_Tile_Right_Click(FXObject *sender, FXSelector sel, void *data)
 	tile = board->get_tile_at(x, y);
 	printf("right click on: %d, %d\n", tile->get_x(), tile->get_y());
 	tile->toggle_flag(Tile::FLAGGED);
+	printf("%d\n", tile->is_flagged());
 	draw_buttons();
 	return 1;
 }
