@@ -30,7 +30,7 @@ FXDEFMAP(MainWindow) MainWindow_Map[]=
 FXIMPLEMENT(MainWindow, FXMainWindow, MainWindow_Map, ARRAYNUMBER(MainWindow_Map))
 
 MainWindow::MainWindow(FXApp *a)
-	: FXMainWindow(a, "foxminesweeper", nullptr, nullptr, DECOR_ALL, 0,0,200,150)
+	: FXMainWindow(a, "foxminesweeper", nullptr, nullptr, DECOR_ALL, 0,0, 500, 500)
 {
 	board = nullptr;
 	matrix = nullptr;
@@ -90,6 +90,7 @@ MainWindow::create_ui()
 	new FXHorizontalSeparator(canvasFrame, SEPARATOR_GROOVE|LAYOUT_FILL_X);
 
 	scroll_area = new FXScrollWindow(canvasFrame, FX::SCROLLERS_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN);
+	scroll_area->setBackColor(canvasFrame->getBackColor());
 
 	// RIGHT pane for the buttons
 	buttonFrame=new FXVerticalFrame(contents, FRAME_SUNKEN|LAYOUT_FILL_Y|LAYOUT_TOP|LAYOUT_LEFT, 0, 0, 0, 0, 10, 10, 10, 10);
