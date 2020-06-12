@@ -14,3 +14,7 @@ make
 binary is in bin/
 
 Right click on a tile to flag it.
+
+Currently whe na game ends you need to restart the program for a new one.
+
+You can change the width, height and mine count in the MainWindow constructor, not added to the gui yet.
