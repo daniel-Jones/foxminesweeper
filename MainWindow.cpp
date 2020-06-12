@@ -37,9 +37,9 @@ MainWindow::MainWindow(FXApp *a)
 	matrix = nullptr;
 	app = a;
 	create_ui();
-	int width = 15;
-	int height = 15;
-	int minecount = 33;
+	int width = 9;
+	int height = 9;
+	int minecount = 10;
 	game_over = false;
 	new_game(width, height, minecount);
 }
@@ -249,7 +249,7 @@ MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 		draw_buttons();
 		app->removeTimeout(this, UI_Timer_Tick);
 		puts("you won the game");
-		FXMessageBox::information(app, FX::MBOX_OK, "Game Over", "You lost in %ld seconds.", seconds);
+		FXMessageBox::information(app, FX::MBOX_OK, "Game Over", "You won in %ld seconds.", seconds);
 		game_over = true;
 		ticking = false;
 	}
