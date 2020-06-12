@@ -14,6 +14,7 @@
  */
 
 #include "MainWindow.h"
+#include "FXMessageBox.h"
 #include "fxdefs.h"
 #include <cstdlib> // rand
 #include <memory>
@@ -235,24 +236,20 @@ MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 	if (!board->is_game_running() && !board->is_game_won())
 	{
 		/* lost */
+		draw_buttons();
 		app->removeTimeout(this, UI_Timer_Tick);
 		puts("you lose the game");
-		std::string message = "You lost in: " + std::to_string(seconds) + " seconds";
-		FXMessageBox *msgbox = new FXMessageBox(app, "Game Over", FXString(message.c_str()), nullptr, FX::MBOX_OK);
-		msgbox->create();
-		msgbox->show();
+		FXMessageBox::information(app, FX::MBOX_OK, "Game Over", "You lost in %ld seconds.", seconds);
 		game_over = true;
 		ticking = false;
 	}
 	else if (!board->is_game_running() && board->is_game_won())
 	{
 		/* won */
+		draw_buttons();
 		app->removeTimeout(this, UI_Timer_Tick);
 		puts("you won the game");
-		std::string message = "You won in: " + std::to_string(seconds) + " seconds";
-		FXMessageBox *msgbox = new FXMessageBox(app, "Game Over", FXString(message.c_str()), nullptr, FX::MBOX_OK);
-		msgbox->create();
-		msgbox->show();
+		FXMessageBox::information(app, FX::MBOX_OK, "Game Over", "You lost in %ld seconds.", seconds);
 		game_over = true;
 		ticking = false;
 	}
