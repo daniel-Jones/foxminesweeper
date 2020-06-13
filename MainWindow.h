@@ -68,6 +68,12 @@ class MainWindow : public FXMainWindow
 		Board *board;
 		FXMatrix *matrix;
 		FXLabel *time_label;
+		FXTextField *width_input;
+		FXTextField *height_input;
+		FXTextField *mine_input;
+		FXHorizontalFrame *width_input_frame;
+		FXHorizontalFrame *height_input_frame;
+		FXHorizontalFrame *mine_input_frame;
 		std::vector<std::shared_ptr<FXButton>> tile_buttons;
 		/* icons */
 		FXIcon *bomb_icon;

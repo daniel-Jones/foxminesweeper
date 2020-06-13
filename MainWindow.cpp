@@ -102,9 +102,23 @@ MainWindow::create_ui()
 	// Horizontal divider line
 	new FXHorizontalSeparator(buttonFrame, SEPARATOR_RIDGE|LAYOUT_FILL_X);
 
-	// Exit button
-	new FXButton(buttonFrame, "&Exit", nullptr, app, FXApp::ID_QUIT, BUTTON_NORMAL|LAYOUT_FILL_X);
+	// new / exit
+	width_input_frame = new FXHorizontalFrame(buttonFrame, LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
+	height_input_frame = new FXHorizontalFrame(buttonFrame, LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
+	mine_input_frame = new FXHorizontalFrame(buttonFrame, LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
+
+	new FXLabel(width_input_frame, "Width: ", NULL, LAYOUT_BOTTOM|LAYOUT_FILL_X);
+	width_input = new FXTextField(width_input_frame, 3, NULL, 0, TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
+	width_input->setText("9");
+	new FXLabel(height_input_frame, "Height: ", NULL, LAYOUT_BOTTOM|LAYOUT_FILL_X);
+	height_input = new FXTextField(height_input_frame, 3, NULL, 0, TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
+	height_input->setText("9");
+	new FXLabel(mine_input_frame, "Mines: ", NULL, LAYOUT_BOTTOM|LAYOUT_FILL_X);
+	mine_input = new FXTextField(mine_input_frame, 3, NULL, 0, TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
+	mine_input->setText("10");
+
 	new FXButton(buttonFrame, "&New Game", nullptr, this, MainWindow::UI_New, BUTTON_NORMAL|LAYOUT_FILL_X);
+	new FXButton(buttonFrame, "&Exit", nullptr, app, FXApp::ID_QUIT, BUTTON_NORMAL|LAYOUT_FILL_X|LAYOUT_BOTTOM);
 	/* create icons */
 	bomb_icon = new FXGIFIcon(app, bomb, IMAGE_KEEP);
 	flag_icon = new FXGIFIcon(app, flag, IMAGE_KEEP);
@@ -124,11 +138,11 @@ MainWindow::new_game(int width, int height, int minecount)
 {
 	seconds = 0;
 	ticking = false;
-	if (board)
-		delete board;
+	tile_buttons.clear();
+	delete board;
+	delete matrix;
 	puts("starting new game..");
 	int tilecount = width*height;
-	tile_buttons.clear();
 	board = new Board(width, height, minecount);
 	matrix = new FXMatrix(scroll_area, width, MATRIX_BY_COLUMNS|LAYOUT_CENTER_Y|LAYOUT_CENTER_X);
 	for (int i = 0; i < tilecount; i++)
@@ -223,7 +237,7 @@ MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 	FXButton *button = dynamic_cast<FXButton*>(sender);
 	if (!button)
 		return 0;
-//	button->killFocus(); // let user control with keyboard
+	button->killFocus(); // let user control with keyboard?
 	x = matrix->colOfChild(button);
 	y = matrix->rowOfChild(button);
 	tile = board->get_tile_at(x, y);
@@ -239,6 +253,7 @@ MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 		draw_buttons();
 		app->removeTimeout(this, UI_Timer_Tick);
 		puts("you lose the game");
+		app->beep();
 		FXMessageBox::information(app, FX::MBOX_OK, "Game Over", "You lost in %ld seconds.", seconds);
 		game_over = true;
 		ticking = false;
@@ -249,6 +264,7 @@ MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 		draw_buttons();
 		app->removeTimeout(this, UI_Timer_Tick);
 		puts("you won the game");
+		app->beep();
 		FXMessageBox::information(app, FX::MBOX_OK, "Game Over", "You won in %ld seconds.", seconds);
 		game_over = true;
 		ticking = false;
@@ -290,7 +306,29 @@ MainWindow::on_New_Click(FXObject *sender, FXSelector sel, void *data)
 {
 	if (board)
 	{
-		new_game(5, 5, 20);
+		int w, h, m;
+		w = FXIntVal(width_input->getText());
+		h = FXIntVal(height_input->getText());
+		m = FXIntVal(mine_input->getText());
+
+		if (w == 0 || h == 0 || m == 0)
+		{
+			/* all fields need values */
+			app->beep();
+			FXMessageBox::information(app, FX::MBOX_OK, "Invalid game options", "All fields need integer values");
+			return 1;
+		}
+
+		if (m > (w*h))
+		{
+			/* cannot have more mines that tiles */
+			app->beep();
+			FXMessageBox::information(app, FX::MBOX_OK, "Invalid game options", "You cannot have more mines that tiles (mines > (width*height)");
+			return 1;
+		}
+
+		printf("new game width = %d height = %d mines = %d\n", w, h, m);
+		new_game(2, 2, 1);
 	}
 	return 1;
 }
