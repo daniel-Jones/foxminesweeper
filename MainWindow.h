@@ -74,7 +74,7 @@ class MainWindow : public FXMainWindow
 		FXHorizontalFrame *width_input_frame;
 		FXHorizontalFrame *height_input_frame;
 		FXHorizontalFrame *mine_input_frame;
-		std::vector<std::shared_ptr<FXButton>> tile_buttons;
+		std::vector<std::unique_ptr<FXButton>> tile_buttons;
 		/* icons */
 		FXIcon *bomb_icon;
 		FXIcon *flag_icon;

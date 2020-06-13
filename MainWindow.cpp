@@ -138,20 +138,21 @@ MainWindow::new_game(int width, int height, int minecount)
 {
 	seconds = 0;
 	ticking = false;
-	tile_buttons.clear();
 	delete board;
 	delete matrix;
+	board = nullptr;
+	matrix = nullptr;
 	puts("starting new game..");
 	int tilecount = width*height;
 	board = new Board(width, height, minecount);
 	matrix = new FXMatrix(scroll_area, width, MATRIX_BY_COLUMNS|LAYOUT_CENTER_Y|LAYOUT_CENTER_X);
 	for (int i = 0; i < tilecount; i++)
 	{
-		std::shared_ptr<FXButton> b(new FXButton(matrix, "", nullptr, this, UI_Tile));
-		tile_buttons.push_back(b);
-		b->setIcon(empty_icon);
+		std::unique_ptr<FXButton> b(new FXButton(matrix, "", nullptr, this, UI_Tile));
+		tile_buttons.push_back(std::move(b));
+		tile_buttons.at(i)->setIcon(empty_icon);
 	}
-	printf("rows: %d columns: %d\n", matrix->getNumRows(), matrix->getNumColumns());
+	printf("matrix thinks rows: %d columns: %d\n", matrix->getNumRows(), matrix->getNumColumns());
 	draw_buttons();
 }
 
@@ -323,12 +324,12 @@ MainWindow::on_New_Click(FXObject *sender, FXSelector sel, void *data)
 		{
 			/* cannot have more mines that tiles */
 			app->beep();
-			FXMessageBox::information(app, FX::MBOX_OK, "Invalid game options", "You cannot have more mines that tiles (mines > (width*height)");
+			FXMessageBox::information(app, FX::MBOX_OK, "Invalid game options", "You cannot have more mines that tiles (mines > (width*height))");
 			return 1;
 		}
 
 		printf("new game width = %d height = %d mines = %d\n", w, h, m);
-		new_game(2, 2, 1);
+		new_game(w, h, m);
 	}
 	return 1;
 }

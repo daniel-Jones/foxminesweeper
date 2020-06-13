@@ -35,7 +35,7 @@ class Board
 		bool is_game_won() { return this->game_won; };
 		bool check_win();
 	private:
-		std::vector<std::shared_ptr<Tile>> tiles;
+		std::vector<std::unique_ptr<Tile>> tiles;
 		void generate_mines();
 		void retrieve_neighbors();
 		void count_neighbor_mines(Tile *tile);

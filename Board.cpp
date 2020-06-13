@@ -29,8 +29,8 @@ Board:: Board(int width, int height, int minecount)
 	{
 		for (int y = 0; y < width; y++)
 		{
-			std::shared_ptr<Tile> t(new Tile(x, y));
-			tiles.push_back(t);
+			std::unique_ptr<Tile> t(new Tile(x, y));
+			tiles.push_back(std::move(t));
 		}
 	}
 	generate_mines();
