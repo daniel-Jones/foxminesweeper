@@ -15,8 +15,10 @@
 
 #include "Board.h"
 
-Board:: Board(int width, int height, int minecount)
+//Board:: Board(int width, int height, int minecount)
+Board:: Board()
 {
+	/*
 	this->width = width;
 	this->height = height;
 	this->tilecount = width*height;
@@ -24,7 +26,7 @@ Board:: Board(int width, int height, int minecount)
 	this->game_running = true;
 	this->game_won = false;
 
-	/* create tiles */
+	// create tiles
 	for (int x = 0; x < height; x++)
 	{
 		for (int y = 0; y < width; y++)
@@ -35,21 +37,23 @@ Board:: Board(int width, int height, int minecount)
 	}
 	generate_mines();
 	retrieve_neighbors();
+	*/
 }
 
 Board::~Board()
 {
+	tiles.clear();
 }
 
 Tile *Board::get_tile_at(int x, int y)
 {
-	return tiles.at(this->width*x+y).get();
+	return tiles.at(this->height*x+y).get();
 }
+
 bool
 Board::reveal_tile_at(int x, int y)
 {
 	Tile *tile = get_tile_at(x, y);
-	printf("revealing x: %d y: %d\n", tile->get_x(), tile->get_y());
 	if (tile->is_mine())
 	{
 		/* lose */
@@ -72,17 +76,36 @@ Board::reveal_tile_at(int x, int y)
 }
 
 void
-Board::new_game(int x, int y)
+Board::new_game(int width, int height, int minecount)
 {
+	this->width = width;
+	this->height = height;
+	this->tilecount = width*height;
+	this->minecount = minecount;
+	this->game_running = true;
+	this->game_won = false;
+	tiles.clear();
+	/* =reate tiles */
+	for (int x = 0; x < height; x++)
+	{
+		for (int y = 0; y < width; y++)
+		{
+			std::unique_ptr<Tile> t(new Tile(x, y));
+			tiles.push_back(std::move(t));
+		}
+	}
+	generate_mines();
+	retrieve_neighbors();
+
 }
 
 void
 Board::reveal_all_mines()
 {
 	Tile *tile;
-	for(auto t = tiles.begin(); t != tiles.end(); ++t)
+	for(auto& t: tiles)
 	{
-		tile = (*t).get();
+		tile = t.get();
 		/* explicitly unflag tile */
 		tile->clear_flag(Tile::FLAGGED); // FIXME: doesnt work as intended, it should unflag all tiles
 		if (tile->is_mine())
@@ -96,26 +119,29 @@ void
 Board::retrieve_neighbors()
 {
 	Tile *tile;
-	for(auto t = tiles.begin(); t != tiles.end(); ++t)
+	int x, y;
+	for (auto& t: tiles)
 	{
-		tile = (*t).get();
+		tile = t.get();
+		x = t->get_x();
+		y = t->get_y();
 		int badup = 0, baddown = 0, badleft = 0, badright = 0;
-		if (tile->get_x()-1<0) badleft = 1;
-		if (tile->get_x()+1>width-1) badright = 1;
+		if (x-1<0) badleft = 1;
+		if (x+1>width-1) badright = 1;
 
-		if (tile->get_y()-1<0) badup = 1;
-		if (tile->get_y()+1>height-1) baddown = 1;
+		if (y-1<0) badup = 1;
+		if (y+1>height-1) baddown = 1;
 
-		if (!badleft && !badup) tile->neighbors[0] = get_tile_at(tile->get_x()-1, tile->get_y()-1);
-		if (!badup) tile->neighbors[1] = get_tile_at(tile->get_x(), tile->get_y()-1);
-		if (!badright && !badup) tile->neighbors[2] = get_tile_at(tile->get_x()+1, tile->get_y()-1);
+		if (!badleft && !badup) tile->neighbors[0] = get_tile_at(x-1, y-1);
+		if (!badup) tile->neighbors[1] = get_tile_at(x, y-1);
+		if (!badright && !badup) tile->neighbors[2] = get_tile_at(x+1, y-1);
 
-		if (!badleft) tile->neighbors[3] = get_tile_at(tile->get_x()-1, tile->get_y());
-		if (!badright) tile->neighbors[4] = get_tile_at(tile->get_x()+1, tile->get_y());
+		if (!badleft) tile->neighbors[3] = get_tile_at(x-1, y);
+		if (!badright) tile->neighbors[4] = get_tile_at(x+1, y);
 
-		if (!badleft && !baddown) tile->neighbors[5] = get_tile_at(tile->get_x()-1, tile->get_y()+1);
-		if (!baddown) tile->neighbors[6] = get_tile_at(tile->get_x(), tile->get_y()+1);
-		if (!badright && !baddown) tile->neighbors[7] = get_tile_at(tile->get_x()+1, tile->get_y()+1);
+		if (!badleft && !baddown) tile->neighbors[5] = get_tile_at(x-1, y+1);
+		if (!baddown) tile->neighbors[6] = get_tile_at(x, y+1);
+		if (!badright && !baddown) tile->neighbors[7] = get_tile_at(x+1, y+1);
 		count_neighbor_mines(tile);
 	}
 }
@@ -137,7 +163,7 @@ Board::count_neighbor_mines(Tile *tile)
 		}
 	}
 	tile->set_neighbor_mine_count(mines);
-	printf("init tile: x: %d, y: %d, neighbor mines: %d\n", tile->get_x(), tile->get_y(), tile->get_neighbor_mine_count());
+	//printf("init tile: x: %d, y: %d, neighbor mines: %d\n", tile->get_x(), tile->get_y(), tile->get_neighbor_mine_count());
 }
 
 void

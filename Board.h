@@ -25,12 +25,13 @@
 class Board
 {
 	public:
-		Board(int width, int height, int minecount);
+		//Board(int width, int height, int minecount);
+		Board();
 		~Board();
 		int get_tile_count(){ return tilecount; };
 		Tile *get_tile_at(int x, int y);
 		bool reveal_tile_at(int x, int y);
-		void new_game(int x, int y);
+		void new_game(int width, int height, int minecount);
 		bool is_game_running() { return this->game_running; };
 		bool is_game_won() { return this->game_won; };
 		bool check_win();

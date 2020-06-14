@@ -55,11 +55,12 @@ class MainWindow : public FXMainWindow
 
 	private:
 		void create_ui();
-		void new_game(int width, int height, int minecount);
+		void new_game(int w, int h, int minecount);
 		void draw_buttons();
 		bool game_over;
 		long unsigned int seconds;
 		bool ticking;
+		int game_count;
 		FXHorizontalFrame *contents;                // Content frame
 		FXVerticalFrame   *canvasFrame;             // Canvas frame
 		FXVerticalFrame   *buttonFrame;             // Button frame

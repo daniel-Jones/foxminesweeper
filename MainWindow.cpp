@@ -33,15 +33,16 @@ FXIMPLEMENT(MainWindow, FXMainWindow, MainWindow_Map, ARRAYNUMBER(MainWindow_Map
 MainWindow::MainWindow(FXApp *a)
 	: FXMainWindow(a, "foxminesweeper", nullptr, nullptr, DECOR_ALL, 0,0, 500, 500)
 {
-	board = nullptr;
+	board = new Board();
 	matrix = nullptr;
 	app = a;
 	create_ui();
-	int width = 9;
-	int height = 9;
+	int w = 9;
+	int h = 9;
 	int minecount = 10;
+	game_count = 0;
 	game_over = false;
-	new_game(width, height, minecount);
+	new_game(w, h, minecount);
 }
 
 MainWindow::~MainWindow()
@@ -134,25 +135,30 @@ MainWindow::create_ui()
 }
 
 void
-MainWindow::new_game(int width, int height, int minecount)
+MainWindow::new_game(int w, int h, int minecount)
 {
+	tile_buttons.clear();
+	game_count++;
 	seconds = 0;
 	ticking = false;
-	delete board;
+	//delete board;
 	delete matrix;
-	board = nullptr;
-	matrix = nullptr;
 	puts("starting new game..");
-	int tilecount = width*height;
-	board = new Board(width, height, minecount);
-	matrix = new FXMatrix(scroll_area, width, MATRIX_BY_COLUMNS|LAYOUT_CENTER_Y|LAYOUT_CENTER_X);
+	int tilecount = w*h;
+	printf("tile count will be %d\n", tilecount);
+	//board = new Board(width, height, minecount);
+	board->new_game(w, h, minecount);
+	matrix = new FXMatrix(scroll_area, w, MATRIX_BY_COLUMNS|LAYOUT_CENTER_Y|LAYOUT_CENTER_X);
+	if (game_count > 1)
+		matrix->create();
 	for (int i = 0; i < tilecount; i++)
 	{
 		std::unique_ptr<FXButton> b(new FXButton(matrix, "", nullptr, this, UI_Tile));
+		b->setIcon(empty_icon);
+		if (game_count > 1)
+			b->create();
 		tile_buttons.push_back(std::move(b));
-		tile_buttons.at(i)->setIcon(empty_icon);
 	}
-	printf("matrix thinks rows: %d columns: %d\n", matrix->getNumRows(), matrix->getNumColumns());
 	draw_buttons();
 }
 
@@ -167,6 +173,8 @@ MainWindow::draw_buttons()
 		button = (*b).get();
 		x = matrix->colOfChild(button);
 		y = matrix->rowOfChild(button);
+		if (x < 0 || y < 0)
+			return;
 		tile = board->get_tile_at(x, y);
 		if (tile->is_flagged())
 		{
@@ -226,18 +234,26 @@ MainWindow::draw_buttons()
 long
 MainWindow::on_Tile_Click(FXObject *sender, FXSelector sel, void *data)
 {
+	puts("click");
 	if (!ticking)
 	{
 		app->addTimeout(this, UI_Timer_Tick, 1000);
 		ticking = true;
 	}
 	if (game_over == true)
+	{
+		puts("game is over");
 		return 1;
+	}
 	int x = 0, y = 0;
 	Tile *tile;
 	FXButton *button = dynamic_cast<FXButton*>(sender);
 	if (!button)
-		return 0;
+	{
+		printf("button is null");
+		return 1;
+	}
+	puts("running click methods");
 	button->killFocus(); // let user control with keyboard?
 	x = matrix->colOfChild(button);
 	y = matrix->rowOfChild(button);
@@ -329,6 +345,9 @@ MainWindow::on_New_Click(FXObject *sender, FXSelector sel, void *data)
 		}
 
 		printf("new game width = %d height = %d mines = %d\n", w, h, m);
+		game_over = false;
+		time_label->setText("0");
+		app->removeTimeout(this, UI_Timer_Tick);
 		new_game(w, h, m);
 	}
 	return 1;

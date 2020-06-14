@@ -44,7 +44,7 @@ class Tile
 		void set_neighbor_mine_count(int count) { this->neighbor_mine_count = count; };
 		Tile *get_neighbor(int i);
 
-		Tile *neighbors[8]; // one day make private with getters/setters
+		Tile *neighbors[8] = {0}; // one day make private with getters/setters
 	private:
 		void set_flags(enum STATE flags) { this->flags = flags; };
 		int x;

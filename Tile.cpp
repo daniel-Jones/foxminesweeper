@@ -21,9 +21,6 @@ Tile::Tile(int x, int y)
 	this->y = y;
 	this->neighbor_mine_count = 0;
 	//
-	// better way?
-	for (int x = 0; x < 8; x++)
-		neighbors[x] = 0;
 	this->flags = HIDDEN; /* make sure we init the flags */
 
 }
