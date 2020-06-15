@@ -216,9 +216,7 @@ Board::reveal_neighbor_tiles(int x, int y)
 bool
 Board::check_win()
 {
-	int allowedmines = minecount;
 	int safetiles = (height * width) - minecount;
-	int correctflags = 0;
 	int correcttiles = 0;
 
 	for (int y = 0; y < height; y++)
@@ -226,12 +224,10 @@ Board::check_win()
 		for (int x = 0; x < width; x++)
 		{
 			Tile *tile = get_tile_at(x, y);
-			if (tile->is_mine() && tile->is_flagged())
-				correctflags++;
-			else if (!(tile->is_mine()) && (tile->is_revealed()))
+			if (!(tile->is_mine()) && (tile->is_revealed()))
 				correcttiles++;
 		}
 	}
 
-	return (correctflags == allowedmines) || (correcttiles == safetiles);
+	return (correcttiles == safetiles);
 }
