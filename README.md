@@ -1,4 +1,6 @@
-![image](https://danieljon.es/media/minesweep1.png)
+![image](https://danieljon.es/posts/media/post114_1.png)
+
+![image](https://danieljon.es/posts/media/post114_2.png)
 
 Simple Minesweeper written in C++ using the fox toolkit.
 
@@ -14,7 +16,3 @@ make
 binary is in bin/
 
 Right click on a tile to flag it.
-
-Currently when a game ends you need to restart the program for a new one.
-
-You can change the width, height and mine count in the MainWindow constructor, not added to the gui yet.
