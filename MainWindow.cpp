@@ -192,6 +192,7 @@ MainWindow::draw_buttons()
 		{
 			button->setIcon(bomb_icon);
 			button->setFrameStyle(0);
+			button->setBackColor(FXRGB(255, 0, 0)); // make mines red
 		}
 		else
 		{

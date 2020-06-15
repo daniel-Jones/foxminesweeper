@@ -86,9 +86,9 @@ Board::new_game(int width, int height, int minecount)
 	this->game_won = false;
 	tiles.clear();
 	/* =reate tiles */
-	for (int x = 0; x < height; x++)
+	for (int x = 0; x < width; x++)
 	{
-		for (int y = 0; y < width; y++)
+		for (int y = 0; y < height; y++)
 		{
 			std::unique_ptr<Tile> t(new Tile(x, y));
 			tiles.push_back(std::move(t));
@@ -107,7 +107,7 @@ Board::reveal_all_mines()
 	{
 		tile = t.get();
 		/* explicitly unflag tile */
-		tile->clear_flag(Tile::FLAGGED); // FIXME: doesnt work as intended, it should unflag all tiles
+		tile->clear_flag(Tile::FLAGGED);
 		if (tile->is_mine())
 		{
 			tile->set_flag(Tile::REVEALED);
@@ -234,5 +234,4 @@ Board::check_win()
 	}
 
 	return (correctflags == allowedmines) || (correcttiles == safetiles);
-
 }
