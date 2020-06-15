@@ -333,15 +333,15 @@ MainWindow::on_New_Click(FXObject *sender, FXSelector sel, void *data)
 		{
 			/* all fields need values */
 			app->beep();
-			FXMessageBox::information(app, FX::MBOX_OK, "Invalid game options", "All fields need integer values");
+			FXMessageBox::information(app, FX::MBOX_OK, "Invalid game options", "All fields need positive (non-zero) integer values");
 			return 1;
 		}
 
-		if (m > (w*h))
+		if (m >= (w*h))
 		{
-			/* cannot have more mines that tiles */
+			/* cannot have >= mines that tiles */
 			app->beep();
-			FXMessageBox::information(app, FX::MBOX_OK, "Invalid game options", "You cannot have more mines that tiles (mines > (width*height))");
+			FXMessageBox::information(app, FX::MBOX_OK, "Invalid game options", "You cannot have the same or more mines than tiles (mines >= (width*height))");
 			return 1;
 		}
 
