@@ -27,6 +27,8 @@ FXDEFMAP(MainWindow) MainWindow_Map[]=
 	FXMAPFUNC(SEL_COMMAND, MainWindow::UI_New, MainWindow::on_New_Click),
 	FXMAPFUNC(SEL_RIGHTBUTTONPRESS, MainWindow::UI_Tile, MainWindow::on_Tile_Right_Click),
 	FXMAPFUNC(SEL_TIMEOUT, MainWindow::UI_Timer_Tick, MainWindow::on_Timer_Tick),
+	FXMAPFUNC(SEL_KEYPRESS, 0, MainWindow::on_Key_Press),
+	FXMAPFUNC(SEL_KEYRELEASE, 0, MainWindow::on_Key_Release),
 };
 FXIMPLEMENT(MainWindow, FXMainWindow, MainWindow_Map, ARRAYNUMBER(MainWindow_Map))
 
@@ -351,5 +353,64 @@ MainWindow::on_New_Click(FXObject *sender, FXSelector sel, void *data)
 		app->removeTimeout(this, UI_Timer_Tick);
 		new_game(w, h, m);
 	}
+	return 1;
+}
+
+long
+MainWindow::on_Key_Press(FXObject *sender, FXSelector sel, void *data)
+{
+	FXEvent* event=(FXEvent*)data;
+	switch(event->code)
+	{
+		/* show mine positons while left control held */
+		case KEY_Control_L:
+			FXButton *button;
+			Tile *tile;
+			int x, y;
+			for(auto b = tile_buttons.begin(); b != tile_buttons.end(); ++b)
+			{
+				button = (*b).get();
+				x = matrix->colOfChild(button);
+				y = matrix->rowOfChild(button);
+				tile = board->get_tile_at(x, y);
+				if (tile->is_mine())
+				{
+					button->setBackColor(FXRGB(0, 255, 0)); // make mines green
+				}
+			}
+			break;
+		default:
+			break;
+	}
+	return 1;
+}
+
+long
+MainWindow::on_Key_Release(FXObject *sender, FXSelector sel, void *data)
+{
+	FXEvent* event=(FXEvent*)data;
+	switch(event->code)
+	{
+		case KEY_Control_L:
+			FXButton *button;
+			Tile *tile;
+			int x, y;
+			for(auto b = tile_buttons.begin(); b != tile_buttons.end(); ++b)
+			{
+				button = (*b).get();
+				x = matrix->colOfChild(button);
+				y = matrix->rowOfChild(button);
+				tile = board->get_tile_at(x, y);
+				if (tile->is_mine())
+				{
+					button->setBackColor(canvasFrame->getBackColor()); // make mines normal
+				}
+			}
+			break;
+
+		default:
+			break;
+	}
+
 	return 1;
 }

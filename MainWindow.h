@@ -21,6 +21,7 @@
 #include <FXMessageBox.h>
 #include <algorithm>
 #include <string>
+#include <fxkeys.h>
 #include "Board.h"
 #include "icons.h"
 
@@ -46,6 +47,8 @@ class MainWindow : public FXMainWindow
 		long on_New_Click(FXObject *sender, FXSelector sel, void *data);
 		long on_Tile_Right_Click(FXObject *sender, FXSelector sel, void *data);
 		long on_Timer_Tick(FXObject *sender, FXSelector sel, void *data);
+		long on_Key_Press(FXObject *sender, FXSelector sel, void *data);
+		long on_Key_Release(FXObject *sender, FXSelector sel, void *data);
 		FXApp *get_app(){ return app; };
 
 
