@@ -380,6 +380,7 @@ MainWindow::on_Key_Press(FXObject *sender, FXSelector sel, void *data)
 			}
 			break;
 		default:
+			this->onKeyPress(sender, sel, data);
 			break;
 	}
 	return 1;
@@ -409,6 +410,7 @@ MainWindow::on_Key_Release(FXObject *sender, FXSelector sel, void *data)
 			break;
 
 		default:
+			this->onKeyPress(sender, sel, data);
 			break;
 	}
 
